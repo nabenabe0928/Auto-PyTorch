@@ -29,12 +29,38 @@ if __name__ == '__main__':
     ############################################################################
     # Data Loading
     # ============
-    X, y = sklearn.datasets.fetch_openml(data_id=40981, return_X_y=True, as_frame=True)
+
+    import openml
+    import time
+    import gc
+    ids = {
+        'higgs': 23512,
+        'poker-hand': 1567,
+        'covertype': 1596
+    }
+
+    time.sleep(0.3)
+    print(f'import module {time.time()}')
+    time.sleep(0.3)
+
+    name = list(ids.keys())[2]
+    print(name)
+    id = ids[name]
+    dataset = openml.datasets.get_dataset(id)
+    X, y, _, _ = dataset.get_data(target=dataset.default_target_attribute)
+
+    # X, y = sklearn.datasets.fetch_openml(data_id=40981, return_X_y=True, as_frame=True)
     X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(
         X,
         y,
         random_state=1,
     )
+
+    del X, y
+    gc.collect()
+    time.sleep(0.3)
+    print(f'Complete dataset {time.time()}')
+    time.sleep(0.3)
 
     ############################################################################
     # Build and fit a classifier
@@ -53,8 +79,8 @@ if __name__ == '__main__':
     api.search(
         X_train=X_train,
         y_train=y_train,
-        X_test=X_test.copy(),
-        y_test=y_test.copy(),
+        X_test=X_test,
+        y_test=y_test,
         optimize_metric='accuracy',
         total_walltime_limit=300,
         func_eval_time_limit_secs=50

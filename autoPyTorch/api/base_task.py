@@ -386,6 +386,9 @@ class BaseTask:
         """
         self._is_dask_client_internally_created = True
         dask.config.set({'distributed.worker.daemon': False})
+        import time
+        print(f'before dask {time.time()}')
+        time.sleep(0.3)
         self._dask_client = dask.distributed.Client(
             dask.distributed.LocalCluster(
                 n_workers=self.n_jobs,
@@ -404,6 +407,8 @@ class BaseTask:
             # Heartbeat every 10s
             heartbeat_interval=10000,
         )
+        print(f'after dask {time.time()}')
+        time.sleep(0.3)
 
     def _close_dask_client(self) -> None:
         """
@@ -565,7 +570,11 @@ class BaseTask:
             num_future_jobs -= 1
             classifier, future = dask_futures.pop(0)
             # call the training by future.result()
+            print(f'before {classifier} {time.time()}')
+            time.sleep(0.3)
             status, cost, runtime, additional_info = future.result()
+            print(f'after {classifier} {time.time()}')
+            time.sleep(0.3)
 
             if status == StatusType.SUCCESS:
                 self._logger.info(

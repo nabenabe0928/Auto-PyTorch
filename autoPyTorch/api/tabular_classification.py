@@ -208,7 +208,12 @@ class TabularClassificationTask(BaseTask):
             dataset_name = str(uuid.uuid1(clock_seq=os.getpid()))
 
         # we have to create a logger for at this point for the validator
+        import time
+        print(f'before logger {time.time()}')
+        time.sleep(0.3)
         self._logger = self._get_logger(dataset_name)
+        print(f'After logger {time.time()}')
+        time.sleep(0.3)
 
         # Create a validator object to make sure that the data provided by
         # the user matches the autopytorch requirements
@@ -220,7 +225,11 @@ class TabularClassificationTask(BaseTask):
         # Fit a input validator to check the provided data
         # Also, an encoder is fit to both train and test data,
         # to prevent unseen categories during inference
+        print(f'before fitting input validator {time.time()}')
+        time.sleep(0.3)
         self.InputValidator.fit(X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test)
+        print(f'After fitting input validator {time.time()}')
+        time.sleep(0.3)
 
         self.dataset = TabularDataset(
             X=X_train, Y=y_train,
